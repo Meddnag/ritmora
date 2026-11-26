@@ -1,0 +1,15 @@
+# ambiente e build
+.venv/
+build_tmp/
+dist/
+__pycache__/
+*.pyc
+# dados pessoais do app (banco, configuração, credenciais do Google)
+dados/
+*.db
+client_secret*.json
+token*.json
+# logs e caches do impeccable
+.impeccable/*.log
+.impeccable/hook.cache.json
+.impeccable/questions/

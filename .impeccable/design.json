@@ -1,0 +1,583 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-26T14:11:00-03:00",
+  "title": "Design System: Ritmora",
+  "extensions": {
+    "colorMeta": {
+      "noite": {
+        "role": "neutral",
+        "displayName": "Noite",
+        "canonical": "#070a1c",
+        "tonalRamp": [
+          "#191d34",
+          "#262e5f",
+          "#2f3c8e",
+          "#3347c2",
+          "#5e6ece",
+          "#909ad5",
+          "#c0c5e2",
+          "#eff0f6"
+        ]
+      },
+      "painel": {
+        "role": "neutral",
+        "displayName": "Painel",
+        "canonical": "#10152c",
+        "tonalRamp": [
+          "#1c2031",
+          "#2c3458",
+          "#394684",
+          "#4357b2",
+          "#6b7ac2",
+          "#97a1ce",
+          "#c4c9de",
+          "#f0f0f5"
+        ]
+      },
+      "painel-2": {
+        "role": "neutral",
+        "displayName": "Painel 2",
+        "canonical": "#171d38",
+        "tonalRamp": [
+          "#1d2030",
+          "#2f3656",
+          "#3d4980",
+          "#485bac",
+          "#6f7ebd",
+          "#9aa3cb",
+          "#c5cadd",
+          "#f0f1f5"
+        ]
+      },
+      "cabecalho": {
+        "role": "neutral",
+        "displayName": "Cabeçalho",
+        "canonical": "#141a34",
+        "tonalRamp": [
+          "#1c2030",
+          "#2d3557",
+          "#3b4882",
+          "#4559af",
+          "#6d7dc0",
+          "#99a2cc",
+          "#c5c9de",
+          "#f0f1f5"
+        ]
+      },
+      "hoje": {
+        "role": "neutral",
+        "displayName": "Hoje",
+        "canonical": "#151c3c",
+        "tonalRamp": [
+          "#1c1f31",
+          "#2c3459",
+          "#384685",
+          "#4156b4",
+          "#6a7ac3",
+          "#97a1ce",
+          "#c3c8df",
+          "#eff0f5"
+        ]
+      },
+      "fio": {
+        "role": "neutral",
+        "displayName": "Fio",
+        "canonical": "#232a4a",
+        "tonalRamp": [
+          "#1e212e",
+          "#313753",
+          "#424c7b",
+          "#505fa5",
+          "#7581b8",
+          "#9ea5c7",
+          "#c7cbdb",
+          "#f0f1f4"
+        ]
+      },
+      "borda": {
+        "role": "neutral",
+        "displayName": "Borda",
+        "canonical": "#2b335a",
+        "tonalRamp": [
+          "#1e212e",
+          "#323753",
+          "#424c7a",
+          "#505fa5",
+          "#7581b7",
+          "#9ea5c7",
+          "#c7cbdb",
+          "#f0f1f4"
+        ]
+      },
+      "tinta": {
+        "role": "neutral",
+        "displayName": "Tinta",
+        "canonical": "#eef1fa",
+        "tonalRamp": [
+          "#1a2032",
+          "#29355c",
+          "#33498a",
+          "#395abc",
+          "#647dc9",
+          "#93a3d2",
+          "#c2c9e1",
+          "#eff1f5"
+        ]
+      },
+      "tinta-suave": {
+        "role": "neutral",
+        "displayName": "Tinta suave",
+        "canonical": "#9aa4c8",
+        "tonalRamp": [
+          "#20232d",
+          "#343a50",
+          "#475176",
+          "#57669e",
+          "#7b87b2",
+          "#a1a9c4",
+          "#c9ccd9",
+          "#f1f1f4"
+        ]
+      },
+      "led-apagado": {
+        "role": "neutral",
+        "displayName": "LED apagado",
+        "canonical": "#151b36",
+        "tonalRamp": [
+          "#1c2030",
+          "#2e3557",
+          "#3b4881",
+          "#4659af",
+          "#6d7cbf",
+          "#99a2cc",
+          "#c5c9de",
+          "#f0f1f5"
+        ]
+      },
+      "destaque-cobalto": {
+        "role": "primary",
+        "displayName": "Cobalto",
+        "canonical": "#3a6bff",
+        "tonalRamp": [
+          "#101b3c",
+          "#132b72",
+          "#0f36ae",
+          "#033ef2",
+          "#3968f4",
+          "#7895ed",
+          "#b5c3ed",
+          "#eceff8"
+        ]
+      },
+      "destaque-cobalto-claro": {
+        "role": "primary",
+        "displayName": "Cobalto claro",
+        "canonical": "#8fb4ff",
+        "tonalRamp": [
+          "#101f3c",
+          "#133272",
+          "#0f43ae",
+          "#0352f2",
+          "#3977f4",
+          "#789fed",
+          "#b5c8ed",
+          "#ecf0f8"
+        ]
+      },
+      "destaque-indigo": {
+        "role": "primary",
+        "displayName": "Índigo",
+        "canonical": "#5b4dff",
+        "tonalRamp": [
+          "#14103c",
+          "#1b1372",
+          "#1b0fae",
+          "#1603f2",
+          "#4839f4",
+          "#8278ed",
+          "#b9b5ed",
+          "#edecf8"
+        ]
+      },
+      "destaque-indigo-claro": {
+        "role": "primary",
+        "displayName": "Índigo claro",
+        "canonical": "#a9a2ff",
+        "tonalRamp": [
+          "#13103c",
+          "#1a1372",
+          "#1b0fae",
+          "#1503f2",
+          "#4739f4",
+          "#8178ed",
+          "#b9b5ed",
+          "#edecf8"
+        ]
+      },
+      "destaque-gelo": {
+        "role": "primary",
+        "displayName": "Gelo",
+        "canonical": "#5d6f9e",
+        "tonalRamp": [
+          "#21242c",
+          "#363d4f",
+          "#4a5573",
+          "#5b6d99",
+          "#7e8caf",
+          "#a3acc2",
+          "#caced8",
+          "#f1f2f4"
+        ]
+      },
+      "destaque-gelo-claro": {
+        "role": "primary",
+        "displayName": "Gelo claro",
+        "canonical": "#d6def5",
+        "tonalRamp": [
+          "#192034",
+          "#26345f",
+          "#2e478f",
+          "#3257c3",
+          "#5e7bcf",
+          "#8fa1d6",
+          "#c0c9e2",
+          "#eff1f6"
+        ]
+      },
+      "destaque-grafite": {
+        "role": "primary",
+        "displayName": "Grafite",
+        "canonical": "#5a6178",
+        "tonalRamp": [
+          "#232529",
+          "#3c3f49",
+          "#53586a",
+          "#69718b",
+          "#898fa4",
+          "#aaaebb",
+          "#cdcfd5",
+          "#f1f2f3"
+        ]
+      },
+      "destaque-grafite-claro": {
+        "role": "primary",
+        "displayName": "Grafite claro",
+        "canonical": "#c3c8d8",
+        "tonalRamp": [
+          "#22242b",
+          "#383d4c",
+          "#4d566f",
+          "#616d94",
+          "#838caa",
+          "#a6acbf",
+          "#cbced7",
+          "#f1f2f3"
+        ]
+      },
+      "estado-agora": {
+        "role": "secondary",
+        "displayName": "Vermelho do Agora",
+        "canonical": "#ff4d5e",
+        "tonalRamp": [
+          "#3c1014",
+          "#72131c",
+          "#ae0f1e",
+          "#f2031a",
+          "#f4394b",
+          "#ed7883",
+          "#edb5ba",
+          "#f8ecee"
+        ]
+      },
+      "estado-ambar": {
+        "role": "secondary",
+        "displayName": "Âmbar Aguardando",
+        "canonical": "#ffc857",
+        "tonalRamp": [
+          "#3c2e10",
+          "#725313",
+          "#ae7a0f",
+          "#f2a403",
+          "#f4b739",
+          "#edc778",
+          "#eddbb5",
+          "#f8f4ec"
+        ]
+      },
+      "estado-ambar-fundo": {
+        "role": "secondary",
+        "displayName": "Âmbar fundo",
+        "canonical": "#2a2414",
+        "tonalRamp": [
+          "#2e2a1e",
+          "#534a32",
+          "#7b6b42",
+          "#a58e50",
+          "#b8a575",
+          "#c7bc9e",
+          "#dbd6c7",
+          "#f4f3f0"
+        ]
+      },
+      "estado-ambar-listra": {
+        "role": "secondary",
+        "displayName": "Âmbar listra",
+        "canonical": "#3a3118",
+        "tonalRamp": [
+          "#2f2b1d",
+          "#564c2f",
+          "#7f6e3d",
+          "#ac9249",
+          "#bda970",
+          "#cbbe9a",
+          "#ddd7c5",
+          "#f5f3f0"
+        ]
+      },
+      "estado-ambar-tinta": {
+        "role": "secondary",
+        "displayName": "Âmbar tinta",
+        "canonical": "#ffd98a",
+        "tonalRamp": [
+          "#3c2e10",
+          "#725313",
+          "#ae7a0f",
+          "#f2a403",
+          "#f4b739",
+          "#edc778",
+          "#eddbb5",
+          "#f8f4ec"
+        ]
+      },
+      "estado-verde": {
+        "role": "secondary",
+        "displayName": "Verde Spark",
+        "canonical": "#3dffa0",
+        "tonalRamp": [
+          "#103c27",
+          "#137243",
+          "#0fae60",
+          "#03f27d",
+          "#39f498",
+          "#78edb4",
+          "#b5edd2",
+          "#ecf8f2"
+        ]
+      },
+      "rede-youtube": {
+        "role": "tertiary",
+        "displayName": "Coral YouTube",
+        "canonical": "#ff7a3d",
+        "tonalRamp": [
+          "#3c1015",
+          "#72131f",
+          "#ae0f22",
+          "#f20320",
+          "#f43950",
+          "#ed7887",
+          "#edb5bc",
+          "#f8ecee"
+        ]
+      },
+      "rede-tiktok": {
+        "role": "tertiary",
+        "displayName": "Céu TikTok",
+        "canonical": "#5ce1ff",
+        "tonalRamp": [
+          "#10293c",
+          "#134972",
+          "#0f6aae",
+          "#038cf2",
+          "#39a4f4",
+          "#78bbed",
+          "#b5d5ed",
+          "#ecf3f8"
+        ]
+      },
+      "rede-instagram": {
+        "role": "tertiary",
+        "displayName": "Aurora Instagram",
+        "canonical": "#e07bff",
+        "tonalRamp": [
+          "#24103c",
+          "#3e1372",
+          "#570fae",
+          "#7003f2",
+          "#8e39f4",
+          "#ad78ed",
+          "#cfb5ed",
+          "#f2ecf8"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "LED logotipo",
+        "purpose": "RITMORA na barra superior, passo 3.0 px; o relógio usa passo 3.2 com pontos apagados (led-apagado)."
+      },
+      "led-cabecalho": {
+        "displayName": "LED cabeçalho",
+        "purpose": "Dias da grade e CANAL, passo 2.6 px."
+      },
+      "led-numero": {
+        "displayName": "LED número",
+        "purpose": "Hora no bloco (passo 1.55) e contagem de posts por canal (passo 1.6)."
+      },
+      "headline": {
+        "displayName": "Título do post",
+        "purpose": "Título do post na gaveta."
+      },
+      "title": {
+        "displayName": "Título de área",
+        "purpose": "Título da aba; nome do canal (12.5pt) e título no bloco (11pt) no mesmo peso."
+      },
+      "body": {
+        "displayName": "Corpo",
+        "purpose": "Texto da interface, campos, botões e legendas."
+      },
+      "meta": {
+        "displayName": "Meta tabular",
+        "purpose": "Formato e metadados em caixa alta, algarismos tabulares, 103%."
+      },
+      "label": {
+        "displayName": "Rótulo",
+        "purpose": "Rótulos de campo da gaveta, caixa alta."
+      }
+    },
+    "shadows": [],
+    "motion": [
+      {
+        "name": "rito-piscar",
+        "value": "2 quadros fechados a cada 36 tiques de 120 ms (cerca de 4,3 s)",
+        "purpose": "O Rito pisca sozinho, exceto dormindo."
+      },
+      {
+        "name": "relogio-led",
+        "value": "redesenho a cada 15 s",
+        "purpose": "Relógio em LED da barra superior."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "minimo",
+        "value": "1100px x 640px"
+      },
+      {
+        "name": "canal-visivel",
+        "value": "1400px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Botão primário",
+      "kind": "button",
+      "refersTo": "button-primario",
+      "description": "Ação principal de cada área: Importar fila, Aprovar e agendar.",
+      "html": "<button class=\"ds-btn-primario\">Aprovar e agendar</button>",
+      "css": ".ds-btn-primario{font-family:'Segoe UI',sans-serif;font-size:10pt;font-weight:700;background:#3a6bff;color:#fff;border:none;border-radius:8px;padding:9px 18px;cursor:pointer}.ds-btn-primario:hover{background:#4d7aff}.ds-btn-primario:focus-visible{outline:2px solid #8fb4ff;outline-offset:2px}.ds-btn-primario:disabled{background:#171d38;color:#5a6390}"
+    },
+    {
+      "name": "Botão padrão",
+      "kind": "button",
+      "refersTo": "button-padrao",
+      "description": "Ações secundárias: Salvar, Enviar, Assistir, Mais.",
+      "html": "<button class=\"ds-btn\">Salvar</button>",
+      "css": ".ds-btn{font-family:'Segoe UI',sans-serif;font-size:10pt;background:#171d38;color:#eef1fa;border:1px solid #2b335a;border-radius:8px;padding:8px 14px;cursor:pointer}.ds-btn:hover{border-color:#8fb4ff}.ds-btn:focus-visible{outline:none;border:2px solid #8fb4ff;padding:7px 13px}.ds-btn:disabled{color:#6f78a6;background:#10152c;border-color:#232a4a}"
+    },
+    {
+      "name": "Botão perigo",
+      "kind": "button",
+      "refersTo": "button-perigo",
+      "description": "Só para Reprovar.",
+      "html": "<button class=\"ds-btn-perigo\">Reprovar</button>",
+      "css": ".ds-btn-perigo{font-family:'Segoe UI',sans-serif;font-size:10pt;background:#171d38;color:#ff4d5e;border:1px solid #4a2333;border-radius:8px;padding:8px 14px;cursor:pointer}.ds-btn-perigo:hover{border-color:#ff4d5e}.ds-btn-perigo:focus-visible{outline:none;border:2px solid #8fb4ff}"
+    },
+    {
+      "name": "Abas da barra superior",
+      "kind": "nav",
+      "refersTo": "aba",
+      "description": "Grade da semana, Fila (n), Publicados.",
+      "html": "<nav class=\"ds-abas\"><button class=\"ds-aba ds-aba-ativa\">Grade da semana</button><button class=\"ds-aba\">Fila (6)</button><button class=\"ds-aba\">Publicados</button></nav>",
+      "css": ".ds-abas{display:flex;gap:10px;background:#070a1c;padding:14px 20px}.ds-aba{font-family:'Segoe UI',sans-serif;font-size:10.5pt;background:transparent;color:#9aa4c8;border:none;border-radius:8px;padding:7px 14px;cursor:pointer}.ds-aba:hover{background:#171d38;color:#eef1fa}.ds-aba-ativa{background:#171d38;color:#eef1fa;font-weight:600}.ds-aba:focus-visible{outline:2px solid #8fb4ff}"
+    },
+    {
+      "name": "Campo de texto",
+      "kind": "input",
+      "refersTo": "campo",
+      "description": "Campos da gaveta e das Configurações, com rótulo em caixa alta.",
+      "html": "<label class=\"ds-rotulo\">Título no YouTube</label><input class=\"ds-campo\" value=\"5 jeitos ridículos de derrotar o Knull\">",
+      "css": ".ds-rotulo{display:block;font-family:'Segoe UI',sans-serif;font-size:9pt;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:#9aa4c8;padding:3px 0}.ds-campo{font-family:'Segoe UI',sans-serif;font-size:10pt;background:#070a1c;color:#eef1fa;border:1px solid #2b335a;border-radius:8px;padding:6px 8px;width:320px}.ds-campo:focus{outline:none;border:2px solid #8fb4ff;padding:5px 7px}.ds-campo::selection{background:#3a6bff;color:#fff}"
+    },
+    {
+      "name": "Caixa de declarações",
+      "kind": "card",
+      "refersTo": "caixa-declaracoes",
+      "description": "IA e crianças, sempre marcadas pela pessoa; contorno âmbar quando falta marcar.",
+      "html": "<div class=\"ds-declara ds-falta\"><div class=\"ds-dec-tit\">Declarações · você marca</div><div class=\"ds-dec-lin\"><span>Gerado ou alterado por IA?</span><label><input type=\"radio\" name=\"ia\"> Sim</label><label><input type=\"radio\" name=\"ia\"> Não</label></div><div class=\"ds-dec-aviso\">Marque para poder aprovar.</div></div>",
+      "css": ".ds-declara{font-family:'Segoe UI',sans-serif;font-size:10pt;color:#eef1fa;background:#070a1c;border:1px solid #2b335a;border-radius:10px;padding:12px 14px;width:300px;display:flex;flex-direction:column;gap:8px}.ds-falta{border:2px solid #ffc857}.ds-dec-tit{font-size:9pt;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:#9aa4c8}.ds-dec-lin{display:flex;gap:10px;align-items:center}.ds-dec-lin span{flex:1}.ds-dec-lin input{accent-color:#8fb4ff}.ds-dec-lin input:focus-visible{outline:2px solid #8fb4ff}.ds-dec-aviso{color:#ffd98a}"
+    },
+    {
+      "name": "Blocos de estado da grade",
+      "kind": "custom",
+      "refersTo": "bloco-post",
+      "description": "Cada estado com cor e forma próprias: aguardando, na agenda, na hora, publicado, erro.",
+      "html": "<div class=\"ds-blocos\"><div class=\"ds-bl ds-ag\" tabindex=\"0\">12:00 SHORT<br>Aguardando</div><div class=\"ds-bl ds-ap\" tabindex=\"0\">12:00 SHORT<br>Na agenda</div><div class=\"ds-bl ds-nh\" tabindex=\"0\"><svg width=\"10\" height=\"10\" viewBox=\"0 0 10 10\"><path d=\"M5 0 L10 9.5 L0 9.5 Z\" fill=\"#070a1c\"/></svg> 09:00 Na hora</div><div class=\"ds-bl ds-pub\" tabindex=\"0\">19:00 SHORT<br>Publicado</div><div class=\"ds-bl ds-err\" tabindex=\"0\">10:00 SHORT<br>Erro</div></div>",
+      "css": ".ds-blocos{display:flex;gap:8px;background:#10152c;padding:12px}.ds-bl{font-family:'Segoe UI',sans-serif;font-size:10pt;font-weight:600;border-radius:6px;padding:9px;width:130px;cursor:pointer}.ds-bl:hover{outline:1px solid #2b335a;outline-offset:3px}.ds-bl:focus-visible{outline:2px solid #8fb4ff;outline-offset:4px}.ds-ag{color:#ffd98a;background:repeating-linear-gradient(-45deg,#2a2414 0 6px,#3a3118 6px 11px);border:1.2px dashed #ffc857}.ds-ap{color:#ff7a3d;background:#171d38;border:2px solid #ff7a3d}.ds-nh{color:#070a1c;background:#e07bff;border:3px solid #ff4d5e}.ds-pub{color:#070a1c;background:#3dffa0}.ds-err{color:#ff4d5e;background:#171d38;border:2px dashed #ff4d5e}"
+    }
+  ],
+  "narrative": {
+    "northStar": "A Grade Acesa na Noite",
+    "overview": "O Ritmora é um painel noturno vivo: um chão azul quase preto, painéis grafite azulados por cima, e uma aurora na cor de destaque pintada só atrás da grade da semana e do mascote. A semana é uma grade de programação, com cada rede como um canal (linha) e cada dia como uma coluna; os posts são blocos acesos no seu horário. O mascote Rito, um cubinho com tela de LED, mostra no rosto o estado da agenda antes de qualquer texto.\n\nA personalidade vem de três materiais próprios: a matriz de pontos (LED 5x7) para números e cabeçalhos, a aurora radial que segue a cor de destaque escolhida pela pessoa, e o Rito. Todo o resto é Qt nativo e contido: Segoe UI, cantos de 8 px, fios de 1 px, nenhuma sombra. A densidade é de ferramenta de trabalho: a gaveta de revisão e aprovação fica sempre visível abaixo da grade.\n\nA identidade é separada do canal Escala de Poder: o amarelo e preto do canal não entram no Ritmora. O painel SaaS cinza e sem personalidade é a anti-referência confirmada.",
+    "keyCharacteristics": [
+      "Chão noturno (noite) com painéis em dois tons de grafite azulado e fios de 1 px.",
+      "Aurora radial na cor de destaque, só atrás da grade e do Rito.",
+      "LED em matriz de pontos para logotipo, relógio, dias e números de destaque; Segoe UI para todo o resto.",
+      "Cada estado de post tem cor e forma próprias, legível sem depender da cor.",
+      "Cor de destaque escolhida pela pessoa (Cobalto, Índigo, Gelo, Grafite); tudo que brilha segue ela.",
+      "Plano, sem sombras: profundidade por tom, aurora e brilho de LED."
+    ],
+    "rules": [
+      {
+        "name": "The Estado Tem Forma Rule",
+        "section": "colors",
+        "body": "Cada estado de post tem cor E forma próprias, e a forma sozinha precisa bastar: aguardando = listras diagonais âmbar com contorno tracejado e marca de meio círculo; na agenda = contorno de 2 px na cor da rede e círculo vazio; agendado na rede = contorno na cor da rede e círculo com ponto; na hora = bloco cheio na cor da rede com borda vermelha de 3 px e triângulo cheio; publicado = bloco verde cheio e círculo com visto; erro = contorno vermelho tracejado e X; reprovado = bloco apagado, texto riscado e círculo cortado. Um estado novo só entra com cor e forma novas."
+      },
+      {
+        "name": "The Destaque Distante Rule",
+        "section": "colors",
+        "body": "Toda cor de destaque fica a cerca de 40° de matiz ou mais das cores de estado (âmbar, verde, vermelho) e das cores de rede (coral, céu, aurora). O destaque marca a interface; ele nunca pode ser lido como um estado ou como uma rede."
+      },
+      {
+        "name": "The Tudo Que Brilha Segue o Destaque Rule",
+        "section": "colors",
+        "body": "Aurora, relógio, dia de hoje, anel de seleção, foco e botão primário usam o par de destaque ativo, nunca um azul fixo."
+      },
+      {
+        "name": "The LED Conta, Segoe Fala Rule",
+        "section": "typography",
+        "body": "LED é para números e cabeçalhos que ficam sozinhos (logotipo, relógio, dias, horas de bloco, contagens). Todo o resto é Segoe UI, inclusive números dentro de frases (\"Próximo post em 3 h 54 min\"), que usam algarismos tabulares. A fonte LED só tem A-Z, 0-9 e : / - .; acentos viram a letra base."
+      },
+      {
+        "name": "The Luz, Não Sombra Rule",
+        "section": "elevation",
+        "body": "Nada recebe sombra projetada. Para destacar algo, use um tom mais claro, um contorno de 2 px ou um brilho radial na cor de destaque."
+      }
+    ],
+    "dos": [
+      "**Do** dar a cada estado de post uma cor e uma forma próprias; a forma sozinha precisa identificar o estado.",
+      "**Do** manter toda cor de destaque a cerca de 40° de matiz ou mais das cores de estado e de rede.",
+      "**Do** usar LED para números e cabeçalhos que ficam sozinhos, e Segoe UI para todo o resto.",
+      "**Do** fazer tudo que brilha (aurora, relógio, hoje, seleção, foco, primário) seguir o par de destaque ativo.",
+      "**Do** mostrar o estado da agenda no rosto do Rito e no Motivo antes de qualquer outra coisa.",
+      "**Do** usar fios de 1px na cor fio e contornos de 1px na cor borda; 2px só para foco, seleção e estados."
+    ],
+    "donts": [
+      "**Don't** usar o amarelo e preto do canal Escala de Poder no Ritmora.",
+      "**Don't** usar sombra projetada; profundidade é tom e luz.",
+      "**Don't** pintar aurora fora da grade e do Rito.",
+      "**Don't** escrever frases, títulos ou botões em LED.",
+      "**Don't** usar uma cor de estado ou de rede como destaque, nem um destaque que se confunda com elas."
+    ]
+  }
+}

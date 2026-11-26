@@ -1,0 +1,17 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "cream-palette",
+        "value": "*",
+        "files": [
+          ".impeccable/mocks/decision/challenger-doujin.html"
+        ],
+        "createdAt": "2026-11-26T16:23:37.192Z",
+        "reason": "newsprint ground is the dealt catalog world's own material (doujin event catalog), decision sketch only"
+      }
+    ]
+  }
+}

@@ -1,0 +1,66 @@
+<!doctype html><html><head><meta charset="utf-8"><style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{width:1440px;height:900px;overflow:hidden;font-family:"Segoe UI Variable","Segoe UI",sans-serif;background:#e2e7e6;color:#1d2a2c}
+.top{height:112px;background:#173a40;color:#e9e4da;display:flex;align-items:center;padding:0 28px;gap:26px}
+.marca{font-family:Bahnschrift,"Segoe UI";font-size:30px;font-weight:600;letter-spacing:1px}
+.sub{font-size:13px;color:#9fbfc2}
+.relogio{position:relative;width:86px;height:86px;margin-left:auto}
+.relogio i{position:absolute;left:41px;top:2px;width:4px;height:4px;border-radius:2px;background:#36585d;transform-origin:2px 41px}
+.relogio i.on{background:#ff4a3a}
+.rnum{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:Bahnschrift;font-size:22px;color:#fff}
+.rnum small{font-size:10px;color:#9fbfc2;letter-spacing:1px}
+.prox{font-size:13px;color:#cfe0e1;width:220px;line-height:1.35}.prox b{color:#fff;font-size:15px}
+.noar{background:#c8262e;color:#fff;font-family:Bahnschrift;font-weight:700;letter-spacing:3px;padding:12px 18px;border-radius:4px;box-shadow:0 0 0 3px #3a151a}
+.bt{background:#24525a;color:#e9e4da;border:0;padding:10px 16px;border-radius:6px;font-size:13px}
+.wrap{display:flex;height:788px}
+.fila{width:470px;background:#d5dcdb;border-right:1px solid #b9c3c2;padding:18px 16px;overflow:hidden}
+.grupo{font-family:Bahnschrift;font-size:12px;letter-spacing:2px;color:#3f4a4a;margin:14px 6px 8px;display:flex;gap:8px;align-items:center}
+.grupo:first-child{margin-top:0}.grupo .n{background:#c8262e;color:#fff;border-radius:9px;padding:0 7px}
+.item{display:flex;gap:12px;background:#edf1f0;border-radius:8px;padding:10px;margin-bottom:8px;border:1px solid #c5cfce}
+.item.sel{background:#fff;border:2px solid #173a40}
+.cap{width:44px;height:78px;border-radius:5px;background:linear-gradient(#2a1c33,#0d0a12)}
+.cap.h{width:78px;height:44px}
+.t{font-size:14px;font-weight:600;line-height:1.25}
+.m{font-size:12px;color:#46524f;margin-top:4px;font-family:Bahnschrift}
+.st{font-size:12px;margin-top:6px;display:flex;align-items:center;gap:6px}
+.dot{width:9px;height:9px;border-radius:5px}
+.det{flex:1;padding:24px 30px;display:flex;gap:28px}
+.prev{width:300px;height:534px;border-radius:10px;background:linear-gradient(#2a1c33,#0a0710);position:relative}
+.prev:after{content:"";position:absolute;left:24px;right:24px;top:70px;height:60px;border:3px solid #ffd42a;border-radius:10px}
+.form{flex:1}
+h2{font-size:22px;font-weight:700}
+.pill{display:inline-flex;gap:6px;align-items:center;background:#ffe3df;color:#8a1a1a;font-size:12px;padding:4px 10px;border-radius:12px;margin:8px 0 18px}
+label{display:block;font-family:Bahnschrift;font-size:11px;letter-spacing:2px;color:#5d6b6b;margin:14px 0 6px}
+.in{background:#fff;border:1px solid #cfc6b5;border-radius:6px;padding:10px 12px;font-size:14px}
+.area{height:120px;line-height:1.45}
+.dec{background:#f2f5f4;border:1px solid #c5cfce;border-radius:8px;padding:12px 14px;margin-top:16px}
+.lin{display:flex;align-items:center;font-size:14px;padding:6px 0}.lin span{flex:1}
+.r{margin-left:14px;display:flex;gap:6px;align-items:center}.r b{width:16px;height:16px;border-radius:8px;border:2px solid #173a40;display:inline-block}
+.r b.x{background:#173a40;box-shadow:inset 0 0 0 3px #fff}
+.acoes{display:flex;gap:10px;margin-top:18px}
+.prim{background:#173a40;color:#fff;font-weight:700;border:0;padding:12px 20px;border-radius:6px;font-size:14px}
+.sec{background:transparent;border:1px solid #9a9183;padding:12px 16px;border-radius:6px;font-size:14px;color:#1d2a2c}
+</style></head><body>
+<div class="top"><div><div class="marca">RITMORA</div><div class="sub">Escala de Poder · 3 redes</div></div>
+<button class="bt">Importar fila</button><button class="bt">Adicionar vídeo</button>
+<div class="relogio" id="rl"></div>
+<div class="prox">Próximo post em <b>42 min</b><br>TikTok · Knull · 19:00</div>
+<div class="noar">NO AR</div></div>
+<div class="wrap"><div class="fila">
+<div class="grupo">NA HORA <span class="n">1</span></div>
+<div class="item"><div class="cap"></div><div><div class="t">5 jeitos ridículos de derrotar o Surfista</div><div class="m">INSTAGRAM · SHORT · HOJE 18:00</div><div class="st"><span class="dot" style="background:#c8262e"></span>Confirme o envio</div></div></div>
+<div class="grupo">AGUARDANDO APROVAÇÃO <span class="n" style="background:#c98a1a">2</span></div>
+<div class="item sel"><div class="cap"></div><div><div class="t">5 jeitos ridículos de derrotar o Knull</div><div class="m">TIKTOK · SHORT · HOJE 19:00</div><div class="st"><span class="dot" style="background:#c98a1a"></span>Falta declarar IA</div></div></div>
+<div class="item"><div class="cap h"></div><div><div class="t">A história do Doomguy: do bebê ao auge</div><div class="m">YOUTUBE · LONGO · SEX 12:00</div><div class="st"><span class="dot" style="background:#c98a1a"></span>Aguardando aprovação</div></div></div>
+<div class="grupo">NA AGENDA</div>
+<div class="item"><div class="cap"></div><div><div class="t">5 jeitos ridículos de derrotar o Knull</div><div class="m">YOUTUBE · SHORT · SEX 12:00</div><div class="st"><span class="dot" style="background:#2a6f8a"></span>Agendado no YouTube</div></div></div>
+</div>
+<div class="det"><div class="prev"></div><div class="form">
+<h2>5 jeitos ridículos de derrotar o Knull</h2><div class="pill">● Aguardando aprovação · TikTok</div>
+<label>LEGENDA</label><div class="in area">O deus dos simbiontes... derrotado por uma PRANCHA DE SURF 🏄🖤 Qual é o mais humilhante? Comenta quem a gente derrota no próximo! #knull #venom #kinginblack</div>
+<label>PUBLICAR EM</label><div class="in">qui 26/11/2026 · 19:00</div>
+<div class="dec"><label style="margin-top:0">DECLARAÇÕES · VOCÊ MARCA</label>
+<div class="lin"><span>Tem conteúdo gerado ou alterado por IA?</span><div class="r"><b></b>Sim</div><div class="r"><b></b>Não</div></div></div>
+<div class="acoes"><button class="prim">Aprovar e agendar</button><button class="sec">Preparar envio agora</button><button class="sec">Reprovar</button></div>
+</div></div></div>
+</body></html>
