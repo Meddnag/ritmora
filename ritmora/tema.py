@@ -76,7 +76,14 @@ QWidget {{ background: transparent; color: {C['tinta']}; font-family: 'Segoe UI'
 QMainWindow, QDialog, QWidget#raiz {{ background: {C['noite']}; }}
 QToolTip {{ background: {C['painel_2']}; color: {C['tinta']}; border: 1px solid {C['borda']}; padding: 6px 8px; }}
 QFrame#topo {{ background: {C['noite']}; border-bottom: 1px solid {C['fio']}; }}
-QLabel#canal {{ color: {C['tinta_suave']}; }}
+QFrame#reparticoes {{ background: {C['noite']}; border-right: 1px solid {C['fio']}; }}
+QPushButton#novoCanal {{ background: transparent; color: {C['tinta_suave']}; border: 1px dashed {C['borda']}; border-radius: 10px;
+    padding: 9px 10px; font-weight: 600; }}
+QPushButton#novoCanal:hover {{ color: {C['tinta']}; border-color: {C['destaque_claro']}; background: {C['painel']}; }}
+QFrame#bannerCanal {{ background: qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 {C['painel_2']}, stop:1 {C['noite']});
+    border: 1px solid {C['borda']}; border-radius: 21px; }}
+QLabel#bannerRotulo {{ color: {C['youtube']}; font-size: 7pt; font-weight: 700; letter-spacing: 1px; }}
+QLabel#bannerNome {{ color: {C['tinta']}; font-size: 10.5pt; font-weight: 600; }}
 QLabel#proximo {{ color: {C['tinta_suave']}; }}
 QPushButton#aba {{ background: transparent; color: {C['tinta_suave']}; border: none; border-radius: 8px; padding: 7px 14px;
     font-family: '{FAMILIA_TV}'; font-size: 10.5pt; }}

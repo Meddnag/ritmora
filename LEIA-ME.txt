@@ -1,26 +1,6 @@
-RITMORA - agendador de posts (YouTube, TikTok, Instagram) · versão 0.1.0
+RITMORA
 
-Abrir: dist\Ritmora\Ritmora.exe  (pode criar um atalho na área de trabalho)
+O guia está no README.md (também na página do GitHub: https://github.com/Meddnag/ritmora).
 
-Como funciona
-1. A produção automática coloca cada vídeo pronto em uma pasta dentro de  D:\PROJETOS IA\jogos\canal-shorts\fila
-   (com post.json, video.mp4 e a capa/thumb).
-2. No Ritmora, clique em "Importar fila": vira um post por rede, com data e hora sugeridas.
-3. Assista, ajuste o texto e a data, marque VOCÊ as declarações (IA e crianças) e clique em "Aprovar e agendar".
-4. Na hora marcada o Ritmora avisa na bandeja. "Preparar envio agora" abre a página da rede, copia a legenda (Ctrl+V)
-   e mostra o vídeo no Explorer. Publique e clique em "Marcar publicado" colando o link.
-5. Fechar a janela deixa o Ritmora na bandeja (perto do relógio), vigiando a agenda. Para sair: botão direito no ícone > Sair.
-
-YouTube automático (opcional)
-- Crie no Google Cloud um projeto, ative a "YouTube Data API v3" e crie um cliente OAuth do tipo "App para computador".
-- Baixe o client_secret.json e coloque em  dist\Ritmora\dados\
-- Em Configurações, troque o modo do YouTube para "Automático" e clique em "Conectar YouTube" (o login é na página do Google).
-- Com isso, ao aprovar, o vídeo sobe já agendado (publishAt) com thumb, IA e crianças como você marcou; o YouTube publica sozinho
-  na hora, mesmo com o PC desligado.
-
-Instagram e TikTok automáticos
-- Instagram: precisa de conta Profissional ligada a uma Página do Facebook e um app da Meta.
-- TikTok: precisa de app aprovado na auditoria do TikTok (antes disso a API só posta como privado).
-- Até lá, essas redes ficam no modo assistido.
-
-Dados: dist\Ritmora\dados  (banco ritmora.db, config.json, login do YouTube). Código-fonte: ritmora\
+- Aplicativo para Windows: Releases > Ritmora-app-windows.zip  (código em ritmora\)
+- Extensão do navegador (Ritmora Ajudante): Releases > Ritmora-extensao-navegador.zip  (código em extensao\)

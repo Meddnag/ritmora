@@ -11,7 +11,7 @@ hiddenimports += collect_submodules('googleapiclient')
 a = Analysis(
     ['Ritmora.pyw'],
     pathex=[],
-    binaries=[],
+    binaries=[('C:/Python315/abi3t-compat/python3t.dll', '.')],
     datas=datas,
     hiddenimports=hiddenimports,
     hookspath=[],

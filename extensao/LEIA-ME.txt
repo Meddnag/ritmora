@@ -1,0 +1,26 @@
+RITMORA AJUDANTE — extensão para Chrome, Edge e Brave
+
+O que faz
+  Nas páginas de envio do YouTube Studio, TikTok Studio e Instagram aparece um painel do Ritmora no canto da tela.
+  Com um clique em cada passo ele:
+    1. anexa o vídeo do post (pega o arquivo direto do Ritmora, sem abrir o Explorer);
+    2. preenche título, descrição/legenda e tags;
+    3. marca as declarações (crianças / IA) exatamente como você respondeu no Ritmora;
+    4. (YouTube) envia a capa.
+  Quem confere e clica em PUBLICAR é sempre você. Depois clique em "Já publiquei" e o post fica marcado no Ritmora.
+
+Instalar (uma vez)
+  1. No navegador, abra  chrome://extensions  (no Edge: edge://extensions, no Brave: brave://extensions).
+  2. Ligue o "Modo do desenvolvedor".
+  3. Clique em "Carregar sem compactação" e escolha esta pasta (extensao).
+  4. No Ritmora: Configurações > Chave da extensão > "Copiar chave".
+  5. Clique no ícone da extensão (fixe-o na barra), cole a chave e clique em "Salvar e testar".
+     Deve aparecer "Conectado ao Ritmora".
+
+Quando você clica em "Enviar agora" no Ritmora, a página de envio abre NESTE navegador (e neste perfil),
+onde a extensão está, e não no navegador padrão. Sem a extensão conectada, o Ritmora usa o navegador das Configurações.
+
+Atualizou a extensão? Em chrome://extensions clique no botão de recarregar do Ritmora Ajudante.
+
+Funciona só com o Ritmora aberto (pode estar minimizado na bandeja).
+A conexão é local (127.0.0.1:47321) e protegida pela chave; nada sai do seu computador.

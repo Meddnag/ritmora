@@ -14,11 +14,16 @@ from PySide6.QtMultimediaWidgets import QVideoWidget
 
 from . import nucleo as N
 from . import redes as R
+from . import navegador as NAV
+from . import ponte as P
 from .tema import COR, estilo, definir_destaque, CORES_DESTAQUE, fonte_tv, fonte_ui, cor_rede
 from .mascote import Rito, pixmap_rito
 from .capa import Capa
 from . import led
 from .grade import Grade, desenhar_marca, STATUS_CURTO
+
+
+PASTA_EXTENSAO = os.path.join(N.pasta_base(), "extensao")
 
 
 def icone_app():
@@ -71,6 +76,234 @@ def rotulo(txt):
     l = QLabel(txt.upper())
     l.setObjectName("rotulo")
     return l
+
+
+def foto_redonda(caminho, letra="?", cor=None, lado=32):
+    """Foto do canal em círculo (ou a inicial sobre a cor do canal quando não há foto)."""
+    from PySide6.QtGui import QPainterPath
+    out = QPixmap(lado * 2, lado * 2)
+    out.fill(Qt.transparent)
+    p = QPainter(out)
+    p.setRenderHint(QPainter.Antialiasing)
+    src = QPixmap(caminho) if caminho and os.path.exists(caminho) else QPixmap()
+    path = QPainterPath()
+    path.addEllipse(QRectF(0, 0, lado * 2, lado * 2))
+    p.setClipPath(path)
+    if src.isNull():
+        p.fillRect(out.rect(), QColor(cor) if cor else cor_rede("youtube"))
+        p.setPen(QColor("#ffffff"))
+        p.setFont(fonte_ui(lado * 0.62, True))
+        p.drawText(out.rect(), Qt.AlignCenter, (letra or "?")[:1].upper())
+    else:
+        p.drawPixmap(out.rect(), src.scaled(lado * 2, lado * 2, Qt.KeepAspectRatioByExpanding, Qt.SmoothTransformation))
+    p.end()
+    out.setDevicePixelRatio(2)
+    return out
+
+
+class BotaoCanal(QWidget):
+    """Uma repartição na coluna de canais: foto, nome, conta do YouTube e o que está pendente."""
+    clicado = Signal(int)
+    menu = Signal(int, object)
+
+    def __init__(self, info):
+        super().__init__()
+        self.info = info
+        self.compacto = False
+        self.selecionado = False
+        self.sobre = False
+        self.setCursor(Qt.PointingHandCursor)
+        self.setFixedHeight(58)
+        self.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.customContextMenuRequested.connect(lambda pos: self.menu.emit(self.info["id"], self.mapToGlobal(pos)))
+        self.foto = foto_redonda(info.get("foto"), info["nome"], info["cor"], 34)
+        dica = info["nome"] + (f"\nYouTube: {info['youtube']}" if info.get("youtube") else "\nYouTube não conectado")
+        if info["alerta"]:
+            dica += f"\n{info['alerta']} na hora ou com erro"
+        if info["pendentes"]:
+            dica += f"\n{info['pendentes']} esperando aprovação"
+        self.setToolTip(dica)
+
+    def enterEvent(self, e):
+        self.sobre = True
+        self.update()
+
+    def leaveEvent(self, e):
+        self.sobre = False
+        self.update()
+
+    def mousePressEvent(self, e):
+        if e.button() == Qt.LeftButton:
+            self.clicado.emit(self.info["id"])
+
+    def paintEvent(self, _):
+        p = QPainter(self)
+        p.setRenderHint(QPainter.Antialiasing)
+        r = QRectF(self.rect()).adjusted(8, 3, -8, -3)
+        cor = QColor(self.info["cor"])
+        if self.selecionado or self.sobre:
+            fundo = QColor(COR["painel_2"]) if self.selecionado else QColor(COR["painel"])
+            p.setPen(QColor(COR["borda"]) if self.selecionado else Qt.NoPen)
+            p.setBrush(fundo)
+            p.drawRoundedRect(r, 10, 10)
+        if self.selecionado:
+            p.setPen(Qt.NoPen)
+            p.setBrush(cor)
+            p.drawRoundedRect(QRectF(r.left() - 5, r.top() + 12, 3, r.height() - 24), 1.5, 1.5)
+        x = r.left() + (r.width() - 34) / 2 if self.compacto else r.left() + 10
+        y = r.top() + (r.height() - 34) / 2
+        p.drawPixmap(int(x), int(y), self.foto)
+        # pontinho de alerta / contagem de pendentes
+        if self.info["alerta"] or self.info["pendentes"]:
+            tom = QColor(COR["agora"]) if self.info["alerta"] else QColor(COR["ambar"])
+            n = self.info["alerta"] or self.info["pendentes"]
+            txt = str(n) if n < 100 else "99+"
+            larg = max(16, 8 + 6 * len(txt))
+            bx, by = x + 34 - larg / 2 - 2, y - 4
+            p.setPen(QColor(COR["noite"]))
+            p.setBrush(tom)
+            p.drawRoundedRect(QRectF(bx, by, larg, 16), 8, 8)
+            p.setPen(QColor("#070a1c"))
+            p.setFont(fonte_ui(7.5, True))
+            p.drawText(QRectF(bx, by, larg, 16), Qt.AlignCenter, txt)
+        if not self.compacto:
+            tx = x + 34 + 10
+            largura = r.right() - tx - 6
+            p.setPen(QColor(COR["tinta"]))
+            p.setFont(fonte_ui(10, True))
+            fm = p.fontMetrics()
+            p.drawText(QRectF(tx, r.top() + 9, largura, 20), Qt.AlignLeft | Qt.AlignVCenter,
+                       fm.elidedText(self.info["nome"], Qt.ElideRight, int(largura)))
+            p.setFont(fonte_ui(8.5))
+            fm = p.fontMetrics()
+            if self.info.get("youtube"):
+                p.setPen(cor_rede("youtube"))
+                sub = "● " + self.info["youtube"]
+            else:
+                p.setPen(QColor(COR["tinta_suave"]))
+                sub = "YouTube não conectado"
+            p.drawText(QRectF(tx, r.top() + 28, largura, 18), Qt.AlignLeft | Qt.AlignVCenter,
+                       fm.elidedText(sub, Qt.ElideRight, int(largura)))
+        p.end()
+
+
+class Reparticoes(QFrame):
+    """Coluna da esquerda: cada canal na sua repartição. Clique para trocar; botão direito para configurar."""
+    escolhido = Signal(int)
+    novo = Signal()
+    acao = Signal(int, str)
+    LARGA, ESTREITA = 224, 68
+
+    def __init__(self):
+        super().__init__()
+        self.setObjectName("reparticoes")
+        self.v = QVBoxLayout(self)
+        self.v.setContentsMargins(0, 12, 0, 12)
+        self.v.setSpacing(2)
+        self.titulo = QLabel("CANAIS")
+        self.titulo.setObjectName("rotulo")
+        self.titulo.setContentsMargins(18, 0, 0, 6)
+        self.v.addWidget(self.titulo)
+        self.caixa = QVBoxLayout()
+        self.caixa.setSpacing(2)
+        self.v.addLayout(self.caixa)
+        self.v.addStretch(1)
+        self.bt_novo = QPushButton("+  Novo canal")
+        self.bt_novo.setObjectName("novoCanal")
+        self.bt_novo.setCursor(Qt.PointingHandCursor)
+        self.bt_novo.clicked.connect(self.novo.emit)
+        linha = QHBoxLayout()
+        linha.setContentsMargins(10, 0, 10, 0)
+        linha.addWidget(self.bt_novo)
+        self.v.addLayout(linha)
+        self.botoes = []
+        self.compacto = False
+        self.setFixedWidth(self.LARGA)
+
+    def montar(self, infos, atual):
+        for b in self.botoes:
+            b.setParent(None)
+            b.deleteLater()
+        self.botoes = []
+        for info in infos:
+            b = BotaoCanal(info)
+            b.selecionado = info["id"] == atual
+            b.compacto = self.compacto
+            b.clicado.connect(self.escolhido.emit)
+            b.menu.connect(self.abrir_menu)
+            self.caixa.addWidget(b)
+            self.botoes.append(b)
+
+    def abrir_menu(self, cid, pos):
+        m = QMenu(self)
+        for rotulo, chave in (("Configurações do canal…", "config"), ("Renomear…", "renomear"), ("Remover canal…", "remover")):
+            a = m.addAction(rotulo)
+            a.triggered.connect(lambda _=False, c=chave: self.acao.emit(cid, c))
+        m.exec(pos)
+
+    def definir_compacto(self, on):
+        if on == self.compacto:
+            return
+        self.compacto = on
+        self.setFixedWidth(self.ESTREITA if on else self.LARGA)
+        self.titulo.setText("" if on else "CANAIS")
+        self.bt_novo.setText("+" if on else "+  Novo canal")
+        self.bt_novo.setToolTip("Novo canal" if on else "")
+        for b in self.botoes:
+            b.compacto = on
+            b.update()
+
+
+class BannerCanal(QFrame):
+    """Banner do canal conectado no topo. Some quando nenhuma conta está conectada."""
+    def __init__(self):
+        super().__init__()
+        self.setObjectName("bannerCanal")
+        self.setFixedHeight(42)
+        h = QHBoxLayout(self)
+        h.setContentsMargins(6, 4, 14, 4)
+        h.setSpacing(9)
+        self.foto = QLabel()
+        self.foto.setFixedSize(32, 32)
+        h.addWidget(self.foto)
+        col = QVBoxLayout()
+        col.setSpacing(0)
+        col.setContentsMargins(0, 0, 0, 0)
+        self.rotulo = QLabel("CANAL CONECTADO")
+        self.rotulo.setObjectName("bannerRotulo")
+        self.nome = QLabel()
+        self.nome.setObjectName("bannerNome")
+        col.addWidget(self.rotulo)
+        col.addWidget(self.nome)
+        h.addLayout(col)
+        self.dados = None
+        self.largura_janela = 1600
+        self.mostrar(None)
+
+    def mostrar(self, dados):
+        self.dados = dados
+        if dados:
+            self.nome.setText(dados["nome"])
+            self.setToolTip(f"YouTube: {dados['nome']}")
+            self.foto.setPixmap(foto_redonda(dados.get("foto"), dados["nome"], None, 32))
+        self._atualizar()
+
+    def ajustar_largura(self, largura):
+        self.largura_janela = largura
+        self._atualizar()
+
+    def _atualizar(self):
+        cheio = self.largura_janela >= 1250
+        self.rotulo.setVisible(cheio)
+        self.nome.setVisible(cheio)
+        if cheio:
+            self.layout().setContentsMargins(6, 4, 14, 4)
+            self.setMinimumWidth(0)
+            self.setMaximumWidth(16777215)
+        else:
+            self.layout().setContentsMargins(5, 4, 5, 4)
+            self.setFixedWidth(44)
+        self.setVisible(bool(self.dados))
 
 
 class Tarefa(QThread):
@@ -169,13 +402,21 @@ class Previa(QDialog):
 
 
 class Configuracoes(QDialog):
-    def __init__(self, cfg, pai):
+    """Configurações da repartição de um canal (e a cor do Ritmora, que vale para todos)."""
+    def __init__(self, cfg, cid, pai):
         super().__init__(pai)
-        self.setWindowTitle("Configurações do Ritmora")
-        self.cfg = dict(cfg)
+        self.cfg, self.cid = cfg, cid
+        cc = N.canal(cfg, cid)
+        self.pasta = N.pasta_canal(cid)
+        self.setWindowTitle(f"Configurações · {cc['nome']}")
         f = QFormLayout(self)
         f.setVerticalSpacing(10)
-        self.fila = QLineEdit(cfg["pasta_fila"])
+        cab = QLabel(f"<b>{cc['nome']}</b><br><span style='color:{COR['tinta_suave']}'>Tudo abaixo vale só para este canal, "
+                     "menos a cor do Ritmora.</span>")
+        f.addRow(cab)
+        self.nome = QLineEdit(cc["nome"])
+        f.addRow("Nome do canal no Ritmora", self.nome)
+        self.fila = QLineEdit(cc["pasta_fila"])
         b = QPushButton("Escolher…")
         b.clicked.connect(self.escolher)
         linha = QHBoxLayout()
@@ -186,13 +427,13 @@ class Configuracoes(QDialog):
         for r in N.REDES:
             te = QTimeEdit()
             te.setDisplayFormat("HH:mm")
-            te.setTime(te.time().fromString(cfg["horarios"][r], "HH:mm"))
+            te.setTime(te.time().fromString(cc["horarios"][r], "HH:mm"))
             self.horas[r] = te
             f.addRow(f"Horário padrão no {N.NOMES_REDE[r]}", te)
             cb = QComboBox()
             cb.addItem("Assistido: abre a página e copia a legenda", "assistido")
             cb.addItem("Automático pela API oficial" if r == "youtube" else "Automático pela API (requer app aprovado pela rede)", "api")
-            cb.setCurrentIndex(max(0, cb.findData(cfg["modo"].get(r, "assistido"))))
+            cb.setCurrentIndex(max(0, cb.findData(cc["modo"].get(r, "assistido"))))
             self.modos[r] = cb
             f.addRow(f"Modo de envio no {N.NOMES_REDE[r]}", cb)
         self.cor = QComboBox()
@@ -204,13 +445,44 @@ class Configuracoes(QDialog):
         f.addRow("Cor do Ritmora", self.cor)
         self.intervalo = QSpinBox()
         self.intervalo.setRange(1, 14)
-        self.intervalo.setValue(int(cfg.get("intervalo_dias", 1)))
+        self.intervalo.setValue(int(cc.get("intervalo_dias", 1)))
         f.addRow("Dias entre posts na mesma rede", self.intervalo)
-        self.bt_yt = QPushButton("Conectar o YouTube" if not R.youtube_conectado(N.DADOS) else "YouTube conectado (reconectar)")
+        self.nav = QComboBox()
+        for nid, rotulo in NAV.listar():
+            self.nav.addItem(rotulo, nid)
+        i = self.nav.findData(cc.get("navegador", NAV.PADRAO))
+        if i < 0 and cc.get("navegador"):
+            self.nav.addItem("(não encontrado) " + cc["navegador"], cc["navegador"])
+            i = self.nav.count() - 1
+        self.nav.setCurrentIndex(max(0, i))
+        self.nav.setToolTip("Onde abrir o login do Google e as páginas de envio. Escolha o perfil logado na conta do canal.")
+        f.addRow("Navegador", self.nav)
+        self.chave = QLineEdit(P.token(self.cfg, cid))
+        self.chave.setReadOnly(True)
+        bc = QPushButton("Copiar chave")
+        bc.clicked.connect(lambda: (QGuiApplication.clipboard().setText(self.chave.text()), bc.setText("Copiada")))
+        bp = QPushButton("Abrir pasta da extensão")
+        bp.clicked.connect(lambda: os.startfile(PASTA_EXTENSAO) if os.path.isdir(PASTA_EXTENSAO) else
+                           QMessageBox.warning(self, "Extensão", f"Não achei a pasta da extensão em: {PASTA_EXTENSAO}"))
+        linha_ext = QHBoxLayout()
+        linha_ext.addWidget(self.chave, 1)
+        linha_ext.addWidget(bc)
+        linha_ext.addWidget(bp)
+        f.addRow("Chave da extensão", linha_ext)
+        dica_ext = QLabel("Cada canal tem a sua chave. Cole esta chave na extensão do navegador (ou perfil) logado neste canal: "
+                          "ela só mostra e abre os posts dele.")
+        dica_ext.setWordWrap(True)
+        dica_ext.setStyleSheet(f"color:{COR['tinta_suave']}")
+        f.addRow(dica_ext)
+        salvo = R.canal_salvo(self.pasta)
+        self.bt_yt = QPushButton("Conectar o YouTube" if not R.youtube_conectado(self.pasta)
+                                 else f"Conectado: {salvo['nome'] if salvo else 'YouTube'} (reconectar)")
         self.bt_yt.clicked.connect(self.conectar_yt)
         f.addRow("Conta do YouTube", self.bt_yt)
         ajuda = QLabel("Para o envio automático no YouTube, coloque o arquivo <b>client_secret.json</b> (cliente OAuth do tipo "
                        f"“App para computador”, com a YouTube Data API v3 ativada no Google Cloud) em:<br>{N.DADOS}<br>"
+                       "Um só arquivo serve para todos os canais. Ao conectar, escolha no Google a conta e o canal desta repartição "
+                       "(conta de outro Google precisa estar em “Usuários de teste” no Google Cloud). "
                        "O login acontece na página do Google; o Ritmora nunca vê sua senha.")
         ajuda.setWordWrap(True)
         ajuda.setStyleSheet(f"color:{COR['tinta_suave']}")
@@ -231,26 +503,32 @@ class Configuracoes(QDialog):
     def conectar_yt(self):
         self.bt_yt.setEnabled(False)
         self.bt_yt.setText("Abrindo o login do Google no navegador…")
-        self.t = Tarefa(R.youtube_servico, N.DADOS, True)
+        self.t = Tarefa(R.youtube_servico, self.pasta, True, self.nav.currentData())
         self.t.feito.connect(lambda _: (self.bt_yt.setText("YouTube conectado"), self.bt_yt.setEnabled(True)))
         self.t.falhou.connect(lambda e: (QMessageBox.warning(self, "Não consegui conectar o YouTube", e),
                                          self.bt_yt.setText("Conectar o YouTube"), self.bt_yt.setEnabled(True)))
         self.t.start()
 
     def salvar(self):
-        self.cfg["pasta_fila"] = self.fila.text()
-        self.cfg["horarios"] = {r: self.horas[r].time().toString("HH:mm") for r in N.REDES}
-        self.cfg["modo"] = {r: self.modos[r].currentData() for r in N.REDES}
-        self.cfg["intervalo_dias"] = self.intervalo.value()
+        cc = N.canal(self.cfg, self.cid)
+        cc["nome"] = self.nome.text().strip() or cc["nome"]
+        cc["pasta_fila"] = self.fila.text().strip()
+        cc["horarios"] = {r: self.horas[r].time().toString("HH:mm") for r in N.REDES}
+        cc["modo"] = {r: self.modos[r].currentData() for r in N.REDES}
+        cc["intervalo_dias"] = self.intervalo.value()
+        cc["navegador"] = self.nav.currentData()
         self.cfg["tema"] = self.cor.currentData()
         N.salvar_cfg(self.cfg)
         self.accept()
 
 
 class Janela(QMainWindow):
+    publicado_pela_extensao = Signal(int)
+
     def __init__(self):
         super().__init__()
         self.cfg = N.carregar_cfg()
+        self.cid = self.cfg["canal_atual"]
         self.db = N.Banco()
         self.atual = None
         self.tarefas = []
@@ -264,6 +542,14 @@ class Janela(QMainWindow):
         v.setContentsMargins(0, 0, 0, 0)
         v.setSpacing(0)
         v.addWidget(self.topo())
+        corpo = QHBoxLayout()
+        corpo.setContentsMargins(0, 0, 0, 0)
+        corpo.setSpacing(0)
+        self.rep = Reparticoes()
+        self.rep.escolhido.connect(self.trocar_canal)
+        self.rep.novo.connect(self.novo_canal)
+        self.rep.acao.connect(self.acao_canal)
+        corpo.addWidget(self.rep)
         div = QSplitter(Qt.Vertical)
         div.setHandleWidth(1)
         div.addWidget(self.miolo())
@@ -273,7 +559,8 @@ class Janela(QMainWindow):
         div.setStretchFactor(1, 0)
         div.setChildrenCollapsible(False)
         self.div = div
-        v.addWidget(div, 1)
+        corpo.addWidget(div, 1)
+        v.addLayout(corpo, 1)
         self.statusBar().setSizeGripEnabled(False)
         self.setMinimumSize(1100, 640)
         # bandeja e relógio
@@ -294,6 +581,120 @@ class Janela(QMainWindow):
         self.relogio.start(30_000)
         self.recarregar()
         QTimer.singleShot(1500, self.verificar)
+        # ponte com a extensão do navegador
+        self.publicado_pela_extensao.connect(self.extensao_publicou)
+        for c in self.cfg["canais"]:
+            P.token(self.cfg, c["id"])
+        self.ponte = P.Ponte(self.cfg, ao_publicar=self.publicado_pela_extensao.emit)
+        if not self.ponte.iniciar():
+            self.statusBar().showMessage("Extensão do navegador desligada: " + self.ponte.erro, 10000)
+        # banner do canal conectado: mostra o que já está guardado e confere com o YouTube em segundo plano
+        self.banner.mostrar(R.canal_salvo(N.pasta_canal(self.cid)))
+        for c in self.cfg["canais"]:
+            self.atualizar_canal(c["id"])
+
+    # ------------------------------------------------------------ repartições (canais)
+    @property
+    def cc(self):
+        return N.canal(self.cfg, self.cid)
+
+    def cc_de(self, p):
+        return N.canal(self.cfg, p.get("canal") or 1)
+
+    def atualizar_canal(self, cid=None):
+        """Confere no YouTube qual canal está conectado nesta repartição (nome e foto) e atualiza banner e coluna."""
+        cid = cid or self.cid
+        pasta = N.pasta_canal(cid)
+        if not R.youtube_conectado(pasta):
+            if cid == self.cid:
+                self.banner.mostrar(None)
+            self.montar_reparticoes()
+            return
+        t = Tarefa(R.youtube_canal, pasta)
+        self.tarefas.append(t)
+        t.feito.connect(lambda d, cid=cid: self.canal_conferido(cid, d))
+        t.falhou.connect(lambda e, cid=cid: self.canal_conferido(cid, R.canal_salvo(N.pasta_canal(cid))))
+        t.start()
+
+    def canal_conferido(self, cid, dados):
+        if cid == self.cid:
+            self.banner.mostrar(dados)
+        self.montar_reparticoes()
+
+    def montar_reparticoes(self):
+        todos = self.db.todos()
+        infos = []
+        for c in self.cfg["canais"]:
+            meus = [p for p in todos if (p.get("canal") or 1) == c["id"]]
+            yt = R.canal_salvo(N.pasta_canal(c["id"]))
+            infos.append({"id": c["id"], "nome": c["nome"], "cor": c.get("cor") or N.CORES_CANAL[0],
+                          "foto": yt.get("foto") if yt else None, "youtube": yt.get("nome") if yt else "",
+                          "alerta": sum(1 for p in meus if p["status"] in ("na_hora", "erro")),
+                          "pendentes": sum(1 for p in meus if p["status"] == "aguardando")})
+        self.rep.montar(infos, self.cid)
+
+    def trocar_canal(self, cid):
+        if cid == self.cid:
+            return
+        self.cid = cid
+        self.cfg["canal_atual"] = cid
+        N.salvar_cfg(self.cfg)
+        self.atual = None
+        self.mostrar(None)
+        self.banner.mostrar(R.canal_salvo(N.pasta_canal(cid)))
+        self.recarregar()
+
+    def novo_canal(self):
+        nome, ok = QInputDialog.getText(self, "Novo canal", "Nome do canal (só para você reconhecer no Ritmora):")
+        if not ok or not nome.strip():
+            return
+        cid = N.novo_canal(self.cfg, nome.strip())
+        P.token(self.cfg, cid)
+        self.trocar_canal(cid)
+        self.configurar(cid)
+
+    def acao_canal(self, cid, acao):
+        c = N.canal(self.cfg, cid)
+        if acao == "config":
+            self.trocar_canal(cid)
+            self.configurar(cid)
+        elif acao == "renomear":
+            nome, ok = QInputDialog.getText(self, "Renomear canal", "Nome do canal no Ritmora:", text=c["nome"])
+            if ok and nome.strip():
+                c["nome"] = nome.strip()
+                N.salvar_cfg(self.cfg)
+                self.recarregar()
+        elif acao == "remover":
+            if len(self.cfg["canais"]) == 1:
+                QMessageBox.information(self, "Remover canal", "Este é o único canal do Ritmora; não dá para remover.")
+                return
+            n = self.db.contar_canal(cid)
+            if n:
+                QMessageBox.information(self, "Remover canal", f"“{c['nome']}” ainda tem {n} post(s) no Ritmora. "
+                                        "Apague ou reprove esses posts antes de remover o canal.")
+                return
+            if QMessageBox.question(self, "Remover canal", f"Remover a repartição “{c['nome']}” do Ritmora?\n\n"
+                                    "A chave da extensão deste canal deixa de funcionar. Os arquivos de login ficam guardados em "
+                                    f"{N.pasta_canal(cid)}.") != QMessageBox.Yes:
+                return
+            self.cfg["canais"] = [x for x in self.cfg["canais"] if x["id"] != cid]
+            if self.cid == cid:
+                self.cid = self.cfg["canais"][0]["id"]
+                self.cfg["canal_atual"] = self.cid
+                self.banner.mostrar(R.canal_salvo(N.pasta_canal(self.cid)))
+            N.salvar_cfg(self.cfg)
+            self.ponte.cfg = self.cfg
+            self.atual = None
+            self.mostrar(None)
+            self.recarregar()
+
+    def extensao_publicou(self, pid):
+        p = self.db.um(pid)
+        if p:
+            self.bandeja.showMessage(f"Ritmora · {self.cc_de(p)['nome']}", f"Publicado no {N.NOMES_REDE[p['rede']]}: {p['titulo'] or p['projeto']}")
+        if self.ponte.ativo == pid:
+            self.ponte.ativo = None
+        self.recarregar()
 
     # ------------------------------------------------------------ montagem
     def topo(self):
@@ -312,11 +713,10 @@ class Janela(QMainWindow):
         self.motivo.setCursor(Qt.PointingHandCursor)
         self.motivo.clicked.connect(self.ir_urgente)
         h.addWidget(self.motivo)
-        self.lab_canal = QLabel(self.cfg.get("canal", ""))
-        self.lab_canal.setObjectName("canal")
-        self.lab_canal.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Preferred)
-        self.lab_canal.setMinimumWidth(0)
-        h.addWidget(self.lab_canal, 1)
+        h.addSpacing(6)
+        self.banner = BannerCanal()
+        h.addWidget(self.banner)
+        h.addStretch(1)
         h.addSpacing(12)
         self.abas = []
         for i, nome in enumerate(("Grade da semana", "Fila", "Publicados")):
@@ -338,8 +738,8 @@ class Janela(QMainWindow):
         menu = QMenu(mais)
         a = menu.addAction("Adicionar vídeo…")
         a.triggered.connect(self.adicionar)
-        a = menu.addAction("Configurações…")
-        a.triggered.connect(self.configurar)
+        a = menu.addAction("Configurações do canal…")
+        a.triggered.connect(lambda: self.configurar())
         mais.setMenu(menu)
         h.addWidget(mais)
         b = QPushButton("Importar fila")
@@ -547,7 +947,9 @@ class Janela(QMainWindow):
 
     def resizeEvent(self, e):
         super().resizeEvent(e)
-        self.lab_canal.setVisible(self.width() >= 1400)
+        self.banner.ajustar_largura(self.width())
+        if hasattr(self, "rep"):
+            self.rep.definir_compacto(self.width() < 1320)
         if hasattr(self, "div"):
             g = self.div.widget(1).sizeHint().height()
             tot = sum(self.div.sizes())
@@ -558,7 +960,9 @@ class Janela(QMainWindow):
         self.titulo_aba.setText(["Semana de " + self.grade.titulo_semana(), "Fila de aprovação", "Publicados"][i])
 
     def recarregar(self):
-        todos = self.db.todos()
+        todos = self.db.todos(canal=self.cid)
+        self.setWindowTitle(f"Ritmora · {self.cc['nome']}")
+        self.montar_reparticoes()
         sel = self.atual["id"] if self.atual else None
         self.grade.mostrar(todos, sel)
         ordem = {"na_hora": 0, "erro": 1, "aguardando": 2, "aprovado": 3, "agendado_rede": 4, "reprovado": 5, "publicado": 6}
@@ -630,7 +1034,7 @@ class Janela(QMainWindow):
 
     def escolher_id(self, pid):
         self.mostrar(self.db.um(pid))
-        self.grade.mostrar(self.db.todos(), pid)
+        self.grade.mostrar(self.db.todos(canal=self.cid), pid)
 
     def mostrar(self, p):
         self.atual = p
@@ -758,7 +1162,7 @@ class Janela(QMainWindow):
         self.db.atualizar(p["id"], f"Aprovado para {fmt_data(p['quando'])} (IA: {'sim' if p['ia'] else 'não'}"
                           + (f", crianças: {'sim' if p['criancas'] else 'não'}" if p["rede"] == "youtube" else "") + ")", status="aprovado",
                           erro=None)
-        if p["rede"] == "youtube" and self.cfg["modo"]["youtube"] == "api":
+        if p["rede"] == "youtube" and self.cc_de(p)["modo"]["youtube"] == "api":
             self.enviar_api(self.db.um(p["id"]))
         self.statusBar().showMessage(f"Aprovado: {N.NOMES_REDE[p['rede']]} em {fmt_data(p['quando'])}.", 5000)
         self.recarregar()
@@ -783,20 +1187,37 @@ class Janela(QMainWindow):
         if not self.atual:
             return
         p = self.db.um(self.atual["id"])
-        if p["rede"] == "youtube" and self.cfg["modo"]["youtube"] == "api":
+        cc = self.cc_de(p)
+        if p["rede"] == "youtube" and cc["modo"]["youtube"] == "api":
             self.enviar_api(p)
             return
-        R.assistido(p, lambda s: QGuiApplication.clipboard().setText(s))
+        self.ponte.ativo = p["id"]
+        copiar = lambda s: QGuiApplication.clipboard().setText(s)
+        if self.ponte.extensao_ativa(cc["id"]):
+            # abre no navegador onde a extensão está (e no perfil logado nela), não no navegador padrão
+            copiar(R.texto_para_copiar(p))
+            self.ponte.abrir(cc["id"], R.PAGINA_ENVIO[p["rede"]])
+            self.db.atualizar(p["id"], "Envio preparado: página aberta pela extensão e legenda copiada", status="na_hora")
+            self.recarregar()
+            QMessageBox.information(self, "Envio preparado",
+                                    f"Abri a página de envio do {N.NOMES_REDE[p['rede']]} no navegador onde está a extensão Ritmora Ajudante "
+                                    f"com a chave de “{cc['nome']}” "
+                                    "e copiei a legenda.\n\nUse o painel do Ritmora na página: anexa o vídeo, preenche os textos e marca "
+                                    "as declarações. Você confere, publica e clica em “Já publiquei”.")
+            return
+        R.assistido(p, copiar, cc.get("navegador", NAV.PADRAO))
         self.db.atualizar(p["id"], "Envio preparado: página aberta e legenda copiada", status="na_hora")
         self.recarregar()
         QMessageBox.information(self, "Envio preparado",
                                 f"Abri a página de envio do {N.NOMES_REDE[p['rede']]}, copiei a legenda (cole com Ctrl+V) e selecionei o vídeo "
-                                "no Explorer.\n\nMarque lá as mesmas declarações que você marcou aqui e publique. Depois clique em "
+                                "no Explorer.\n\nSe a extensão Ritmora Ajudante estiver instalada, use o painel dela na página: anexa o vídeo, preenche "
+                                "os textos e marca as declarações; você confere e publica e clica em “Já publiquei”. Sem ela, marque "
+                                "as mesmas declarações que marcou aqui, publique e clique em "
                                 "“Publicado”.")
 
     def enviar_api(self, p):
         self.db.atualizar(p["id"], "Enviando para o YouTube pela API…")
-        t = Tarefa(R.youtube_enviar, p, N.DADOS)
+        t = Tarefa(R.youtube_enviar, p, N.pasta_canal(p.get("canal") or 1))
         self.tarefas.append(t)
         t.progresso.connect(lambda n: self.statusBar().showMessage(f"Enviando para o YouTube: {n}%"))
         t.feito.connect(lambda r, pid=p["id"]: self.api_ok(pid, r))
@@ -818,16 +1239,18 @@ class Janela(QMainWindow):
 
     def verificar(self):
         for p in self.db.vencidos():
-            if p["rede"] == "youtube" and self.cfg["modo"]["youtube"] == "api":
+            cc = self.cc_de(p)
+            if p["rede"] == "youtube" and cc["modo"]["youtube"] == "api":
                 continue
             self.db.atualizar(p["id"], "Chegou a hora", status="na_hora")
-            self.bandeja.showMessage("Ritmora: hora de postar", f"{N.NOMES_REDE[p['rede']]}: {p['titulo'] or p['projeto']}")
+            self.bandeja.showMessage(f"Ritmora · {cc['nome']}: hora de postar", f"{N.NOMES_REDE[p['rede']]}: {p['titulo'] or p['projeto']}")
         self.recarregar()
 
     def importar(self):
-        n, avisos = N.importar_fila(self.db, self.cfg)
+        n, avisos = N.importar_fila(self.db, self.cc)
         self.recarregar()
-        msg = f"{n} post{'s' if n != 1 else ''} importado{'s' if n != 1 else ''} da fila." if n else "A fila de produção está vazia."
+        msg = (f"{n} post{'s' if n != 1 else ''} importado{'s' if n != 1 else ''} da fila de “{self.cc['nome']}”." if n
+               else f"A fila de produção de “{self.cc['nome']}” está vazia.")
         self.statusBar().showMessage(msg + (" " + " ".join(avisos) if avisos else ""), 8000)
 
     def adicionar(self):
@@ -840,13 +1263,20 @@ class Janela(QMainWindow):
         rede = next(k for k, v in N.NOMES_REDE.items() if v == rede)
         nome = os.path.splitext(os.path.basename(arq))[0]
         self.db.criar(projeto=nome, rede=rede, formato="short", titulo=nome, descricao="", tags="", video=arq, thumb=None,
-                      quando=N.proximo_horario(self.db, rede, self.cfg), pasta=os.path.dirname(arq), ia=None, criancas=None)
+                      quando=N.proximo_horario(self.db, rede, self.cc), pasta=os.path.dirname(arq), ia=None, criancas=None,
+                      canal=self.cid)
         self.recarregar()
 
-    def configurar(self):
-        d = Configuracoes(self.cfg, self)
-        if d.exec():
-            self.cfg = N.carregar_cfg()
+    def configurar(self, cid=None):
+        cid = cid or self.cid
+        d = Configuracoes(self.cfg, cid, self)
+        d.exec()
+        # salvo ou não, o login do YouTube pode ter mudado durante o diálogo
+        self.cfg = N.carregar_cfg()
+        self.cfg["canal_atual"] = self.cid
+        self.ponte.cfg = self.cfg
+        self.atualizar_canal(cid)
+        if d.result():
             definir_destaque(self.cfg.get("tema", "cobalto"))
             QApplication.instance().setStyleSheet(estilo())
             self.recarregar()

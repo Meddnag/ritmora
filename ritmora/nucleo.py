@@ -25,27 +25,97 @@ def pasta_base():
 DADOS = os.path.join(pasta_base(), "dados")
 os.makedirs(DADOS, exist_ok=True)
 ARQ_CFG = os.path.join(DADOS, "config.json")
-PADRAO_CFG = {
-    "pasta_fila": r"D:\PROJETOS IA\jogos\canal-shorts\fila",
+# config.json: "tema" e "canal_atual" valem para o Ritmora todo; cada canal tem a sua repartição em "canais".
+PADRAO_CANAL = {
+    "pasta_fila": "",
     "horarios": {"youtube": "12:00", "tiktok": "19:00", "instagram": "18:00"},
     "intervalo_dias": 1,
     "modo": {"youtube": "assistido", "tiktok": "assistido", "instagram": "assistido"},
-    "canal": "Escala de Poder",
+    "navegador": "",
 }
+CORES_CANAL = ["#3a6bff", "#ff7a3d", "#3dffa0", "#e07bff", "#5ce1ff", "#ffc857", "#ff5c8a", "#9b8cff"]
+CHAVES_ANTIGAS = ("pasta_fila", "horarios", "intervalo_dias", "modo", "navegador", "token_extensao", "canal")
+ARQUIVOS_CANAL = ("youtube_token.json", "canal.json", "canal_foto.jpg")
+
+
+def pasta_canal(cid):
+    """Pasta da repartição do canal: login do YouTube, nome e foto do canal conectado."""
+    p = os.path.join(DADOS, "canais", str(cid))
+    os.makedirs(p, exist_ok=True)
+    return p
+
+
+def _completar(c):
+    for k, v in PADRAO_CANAL.items():
+        if k not in c:
+            c[k] = json.loads(json.dumps(v))
+        elif isinstance(v, dict):
+            c[k] = {**v, **c[k]}
+    return c
+
+
+def _migrar(cfg):
+    """Ritmora de um canal só -> repartições. O canal que já existia vira o canal 1, com seus arquivos e sua chave."""
+    um = {"id": 1, "nome": cfg.get("canal") or "Meu canal", "cor": CORES_CANAL[0]}
+    for k in CHAVES_ANTIGAS:
+        if k in cfg and k != "canal":
+            um[k] = cfg[k]
+    for k in CHAVES_ANTIGAS:
+        cfg.pop(k, None)
+    destino = pasta_canal(1)
+    for nome in ARQUIVOS_CANAL:
+        antigo = os.path.join(DADOS, nome)
+        if os.path.exists(antigo) and not os.path.exists(os.path.join(destino, nome)):
+            shutil.move(antigo, os.path.join(destino, nome))
+    arq = os.path.join(destino, "canal.json")
+    if os.path.exists(arq):
+        try:
+            d = json.load(open(arq, encoding="utf-8"))
+            if d.get("foto"):
+                d["foto"] = os.path.join(destino, "canal_foto.jpg")
+                json.dump(d, open(arq, "w", encoding="utf-8"), ensure_ascii=False)
+        except Exception:
+            pass
+    cfg["canais"] = [um]
+    cfg["canal_atual"] = 1
 
 
 def carregar_cfg():
-    cfg = dict(PADRAO_CFG)
+    cfg = {"tema": "cobalto"}
     if os.path.exists(ARQ_CFG):
         try:
             cfg.update(json.load(open(ARQ_CFG, encoding="utf-8")))
         except Exception:
             pass
+    if not cfg.get("canais"):
+        _migrar(cfg)
+        salvar_cfg(cfg)
+    for c in cfg["canais"]:
+        _completar(c)
+    if not any(c["id"] == cfg.get("canal_atual") for c in cfg["canais"]):
+        cfg["canal_atual"] = cfg["canais"][0]["id"]
     return cfg
 
 
 def salvar_cfg(cfg):
     json.dump(cfg, open(ARQ_CFG, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
+
+
+def canal(cfg, cid):
+    """Configuração da repartição de um canal (o próprio dicionário dentro de cfg)."""
+    return next((c for c in cfg["canais"] if c["id"] == cid), cfg["canais"][0])
+
+
+def novo_canal(cfg, nome):
+    cid = max(c["id"] for c in cfg["canais"]) + 1
+    base = canal(cfg, cfg.get("canal_atual"))
+    c = _completar({"id": cid, "nome": nome, "cor": CORES_CANAL[(cid - 1) % len(CORES_CANAL)],
+                    "horarios": dict(base["horarios"]), "intervalo_dias": base["intervalo_dias"],
+                    "navegador": base.get("navegador", "")})
+    cfg["canais"].append(c)
+    salvar_cfg(cfg)
+    pasta_canal(cid)
+    return cid
 
 
 class Banco:
@@ -62,17 +132,25 @@ class Banco:
             link TEXT, erro TEXT, pasta TEXT,
             criado TEXT, atualizado TEXT)""")
         self.con.execute("CREATE TABLE IF NOT EXISTS historico (id INTEGER PRIMARY KEY AUTOINCREMENT, post INTEGER, quando TEXT, texto TEXT)")
+        if "canal" not in [r[1] for r in self.con.execute("PRAGMA table_info(posts)")]:
+            self.con.execute("ALTER TABLE posts ADD COLUMN canal INTEGER DEFAULT 1")
+            self.con.execute("UPDATE posts SET canal = 1 WHERE canal IS NULL")
         self.con.commit()
 
     # ------------------------------------------------------------ consultas
-    def todos(self, filtro=None):
+    def todos(self, filtro=None, canal=None):
         q = "SELECT * FROM posts"
-        args = ()
+        cond, args = [], []
         if filtro and filtro != "todos":
-            q += " WHERE status = ?"
-            args = (filtro,)
+            cond.append("status = ?")
+            args.append(filtro)
+        if canal is not None:
+            cond.append("canal = ?")
+            args.append(canal)
+        if cond:
+            q += " WHERE " + " AND ".join(cond)
         q += " ORDER BY COALESCE(quando, criado)"
-        return [dict(r) for r in self.con.execute(q, args)]
+        return [dict(r) for r in self.con.execute(q, tuple(args))]
 
     def um(self, pid):
         r = self.con.execute("SELECT * FROM posts WHERE id = ?", (pid,)).fetchone()
@@ -103,6 +181,9 @@ class Banco:
         if nota:
             self.anotar(pid, nota)
 
+    def contar_canal(self, cid):
+        return self.con.execute("SELECT COUNT(*) FROM posts WHERE canal = ?", (cid,)).fetchone()[0]
+
     def apagar(self, pid):
         self.con.execute("DELETE FROM posts WHERE id = ?", (pid,))
         self.con.execute("DELETE FROM historico WHERE post = ?", (pid,))
@@ -129,22 +210,24 @@ def pode_aprovar(p):
     return falta
 
 
-def proximo_horario(banco, rede, cfg, depois=None):
-    """Próximo horário livre da rede, respeitando o horário padrão e o intervalo entre posts."""
-    hh, mm = map(int, cfg["horarios"].get(rede, "12:00").split(":"))
-    ocupados = {p["quando"][:10] for p in banco.todos() if p["rede"] == rede and p["quando"] and p["status"] not in ("reprovado", "erro")}
+def proximo_horario(banco, rede, cc, depois=None):
+    """Próximo horário livre da rede neste canal, respeitando o horário padrão e o intervalo entre posts."""
+    hh, mm = map(int, cc["horarios"].get(rede, "12:00").split(":"))
+    ocupados = {p["quando"][:10] for p in banco.todos(canal=cc["id"]) if p["rede"] == rede and p["quando"] and p["status"] not in ("reprovado", "erro")}
     d = (depois or datetime.now()).replace(hour=hh, minute=mm, second=0, microsecond=0)
     if d <= datetime.now():
         d += timedelta(days=1)
     while d.date().isoformat() in ocupados:
-        d += timedelta(days=max(1, int(cfg.get("intervalo_dias", 1))))
+        d += timedelta(days=max(1, int(cc.get("intervalo_dias", 1))))
     return d.isoformat(timespec="minutes")
 
 
 # ---------------------------------------------------------------- fila de produção
-def importar_fila(banco, cfg):
-    """Lê <pasta_fila>/<projeto>/post.json e cria um post por rede. Projetos importados vão para <pasta_fila>/_importados."""
-    raiz = cfg["pasta_fila"]
+def importar_fila(banco, cc):
+    """Lê <pasta_fila do canal>/<projeto>/post.json e cria um post por rede nesse canal. Importados vão para <pasta_fila>/_importados."""
+    raiz = cc.get("pasta_fila") or ""
+    if not raiz:
+        return 0, [f"Escolha a pasta da fila de “{cc['nome']}” em Configurações."]
     if not os.path.isdir(raiz):
         return 0, [f"Pasta da fila não existe: {raiz}"]
     criados, avisos = 0, []
@@ -166,14 +249,14 @@ def importar_fila(banco, cfg):
             banco.criar(projeto=d.get("projeto", nome), rede=rede, formato=r.get("formato", d.get("formato", "short")),
                         titulo=r.get("titulo", ""), descricao=r.get("descricao") or r.get("legenda", ""),
                         tags=", ".join(r.get("tags", [])), video=video, thumb=os.path.join(pasta, thumb) if thumb else None,
-                        quando=r.get("quando") or proximo_horario(banco, rede, cfg), pasta=pasta,
-                        ia=d.get("ia_sugerido"), criancas=None)
+                        quando=r.get("quando") or proximo_horario(banco, rede, cc), pasta=pasta,
+                        ia=d.get("ia_sugerido"), criancas=None, canal=cc["id"])
             criados += 1
         destino = os.path.join(raiz, "_importados")
         os.makedirs(destino, exist_ok=True)
         try:
             shutil.move(pasta, os.path.join(destino, nome))
-            for p in banco.todos():
+            for p in banco.todos(canal=cc["id"]):
                 if p["pasta"] == pasta:
                     novo = os.path.join(destino, nome)
                     banco.atualizar(p["id"], video=p["video"].replace(pasta, novo),

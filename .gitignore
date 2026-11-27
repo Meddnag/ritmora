@@ -13,3 +13,7 @@ token*.json
 .impeccable/*.log
 .impeccable/hook.cache.json
 .impeccable/questions/
+# cópias de segurança e builds temporários
+backup_dados_*/
+dist_novo/
+t_*.spec

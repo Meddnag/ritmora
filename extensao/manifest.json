@@ -1,0 +1,51 @@
+{
+  "manifest_version": 3,
+  "name": "Ritmora Ajudante",
+  "version": "1.2.0",
+  "description": "Painel do Ritmora nas páginas de envio do YouTube Studio, TikTok Studio e Instagram: anexa o vídeo, preenche os textos e marca as declarações. Você confere e publica.",
+  "icons": {
+    "16": "icones/16.png",
+    "48": "icones/48.png",
+    "128": "icones/128.png"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Ritmora Ajudante"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "permissions": [
+    "storage",
+    "alarms"
+  ],
+  "host_permissions": [
+    "http://127.0.0.1:47321/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": [
+        "https://studio.youtube.com/*",
+        "https://www.tiktok.com/tiktokstudio/*",
+        "https://www.tiktok.com/creator-center/*",
+        "https://www.instagram.com/*"
+      ],
+      "js": [
+        "content.js"
+      ],
+      "run_at": "document_idle"
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "rito/*.png"
+      ],
+      "matches": [
+        "https://studio.youtube.com/*",
+        "https://www.tiktok.com/*",
+        "https://www.instagram.com/*"
+      ]
+    }
+  ]
+}
